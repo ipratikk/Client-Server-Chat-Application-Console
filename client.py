@@ -19,6 +19,9 @@ username = my_username.encode("utf-8")
 username_header = f"{len(username) : < {HEADER_LENGTH}}".encode("utf-8")
 client_socket.send(username_header + username)
 
+
+
+
 while True:
     message = input(f"{my_username} > ")
 

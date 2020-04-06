@@ -44,7 +44,7 @@ while True:
                 continue
             sockets_list.append(client_socket)
             clients[client_socket] = user
-            client_map[user['data'].decode('utf-8')] = (client_address[0],client_address[1])
+            client_map[user['data'].decode('utf-8')] = client_socket
             print(f"Accepted new connection from {client_address[0]} : {client_address[1]} username : {user['data'].decode('utf-8')}")
 
         else:
@@ -58,10 +58,17 @@ while True:
 
             user = clients[notified_socket]
             print(f"Received message from {user['data'].decode('utf-8')} > {message['data'].decode('utf-8')}")
+            message_str = message['data'].decode('utf-8')
+            if message_str[0]=='@':
+                ind = message_str.index(' ')
+                send_to, send_msg = message_str[1:ind], message_str[ind+1:]
+                if send_to in client_map:
+                    client_map[send_to].send(user['header'] + user['data'] + message['header'] + send_msg.encode('utf-8'))
 
-            for client_socket in clients:
-                if client_socket != notified_socket:
-                    client_socket.send(user['header'] + user['data'] + message['header'] + message['data'])
+            else:
+                for client_socket in clients:
+                    if client_socket != notified_socket:
+                        client_socket.send(user['header'] + user['data'] + message['header'] + message['data'])
 
     for notified_socket in exception_sockets:
         sockets_list.remove(notified_socket)
