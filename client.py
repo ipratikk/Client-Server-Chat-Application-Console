@@ -24,6 +24,8 @@ client_socket.send(username_header + username)
 print("1. Send messages to all by default")
 print("2. Mention @user<space><message> to send private message to any specific user")
 print()
+
+
 while True:
 
     message = input(f"{my_username} > ")
